@@ -40,7 +40,7 @@ RUN mkdir /home/nanobot/.nanobot
 
 RUN echo 'nanobot:nanobot' | chpasswd
 
-RUN chown -R nanobot:users /home/nanobot/.config
+#RUN chown -R nanobot:users /home/nanobot/.config
 
 RUN sed -re 's/^(\#)(Port)([[:space:]]+)(.*)/\2\3\4/' -i.`date -I` /etc/ssh/sshd_config
 RUN sed -re "s/^(Port)([[:space:]]+)([0-9]+)/\1\2${SSH_PORT_ARG}/" -i.`date -I` /etc/ssh/sshd_config
@@ -67,7 +67,7 @@ WORKDIR /app
 
 #add nexus local pypi proxy
 RUN mkdir /home/nanobot/.pip
-COPY ../pip.conf /home/nanobot/.pip
+#COPY pip.conf /home/nanobot/.pip
 
 # Install Python dependencies first (cached layer)
 COPY pyproject.toml README.md LICENSE ./
