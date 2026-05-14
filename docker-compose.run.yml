@@ -1,0 +1,44 @@
+x-common-config: &common-config
+  build:
+    context: nanobot-agent
+    dockerfile: ../Dockerfile.run
+    args:
+        CUSTOM_SSH_PORT: ${SSH_PORT}
+        CUSTOM_UID: ${AGENT_UID}
+        CUSTOM_GID: ${AGENT_GID}
+    image: nanobot-agent
+  env_file:
+    - .env
+  volumes:
+    - ~/.nanobot:/home/nanobot/.nanobot
+  #network_mode: host # host для wakeonlan
+  network_mode: bridge
+  
+services:
+  nanobot-gateway:
+    container_name: nanobot-gateway
+    <<: *common-config
+    command: ["gateway"]
+    restart: unless-stopped
+    ports:
+      - 127.0.0.1:${SSH_PORT}:${SSH_PORT}
+    deploy:
+      resources:
+        limits:
+          cpus: '4'
+          memory: 16G
+        reservations:
+          cpus: '0.25'
+          memory: 256M
+          devices:
+            - driver: nvidia
+              device_ids: ['${NVIDIA_VISIBLE_DEVICES}'] 
+              capabilities: [gpu]  
+  
+  nanobot-cli:
+    <<: *common-config
+    profiles:
+      - cli
+    command: ["status"]
+    stdin_open: true
+    tty: true

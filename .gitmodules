@@ -1,0 +1,3 @@
+[submodule "nanobot-agent"]
+	path = nanobot-agent
+	url = https://github.com/HKUDS/nanobot
